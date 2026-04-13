@@ -14,20 +14,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const content = String(body.content || "").trim();
-    const turnstileToken = String(body.turnstileToken || "");
-
-    if (!turnstileToken) {
-      return NextResponse.json({ error: "Captcha required" }, { status: 400 });
-    }
 
     const ip = getClientIp(request);
     const userAgent = request.headers.get("user-agent") || "unknown";
-
-    const captchaResult = await verifyTurnstileToken(turnstileToken, ip);
-
-    if (!captchaResult.success) {
-      return NextResponse.json({ error: "Captcha verification failed" }, { status: 400 });
-    }
 
     const validation = validateConfession(content);
     if (!validation.valid) {
@@ -35,7 +24,6 @@ export async function POST(request: NextRequest) {
     }
 
     const submitterHash = hashIdentifier(`${ip}:${userAgent}`);
-
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 
     const { data: recentSubmissions, error: recentError } = await supabaseServer
