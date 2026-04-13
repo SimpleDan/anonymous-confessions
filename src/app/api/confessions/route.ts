@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/src/lib/supabase-server";
-import { containsBlockedContent, hashIdentifier, validateConfession } from "@/src/lib/security";
-import { verifyTurnstileToken } from "@/src/lib/turnstile";
+import { supabaseServer } from "src/lib/supabase-server";
+import { containsBlockedContent, hashIdentifier, validateConfession } from "src/lib/security";
 
 function getClientIp(request: NextRequest): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
