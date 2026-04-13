@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error } = await supabaseServer
     .from("confessions")
-    .select("id, content, created_at, flag_reason")
+    .select("id, name, email, content, created_at, flag_reason")
     .eq("status", "pending")
     .order("created_at", { ascending: false });
 
