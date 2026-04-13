@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 type Confession = {
   id: string;
+  name: string | null;
+  email: string | null;
   content: string;
   created_at: string;
   flag_reason: string | null;
@@ -94,6 +96,8 @@ export default function AdminPage() {
               key={item.id}
               style={{ border: "1px solid #ddd", borderRadius: 8, padding: "1rem" }}
             >
+              <p><strong>Name:</strong> {item.name || "-"}</p>
+              <p><strong>Email:</strong> {item.email || "-"}</p>
               <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>
               <small>{new Date(item.created_at).toLocaleString()}</small>
               {item.flag_reason && <p>Flag: {item.flag_reason}</p>}
