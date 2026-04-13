@@ -2,15 +2,19 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: "2rem" }}>
-      <h1>Anonymous Confessions</h1>
-      <p>Submit anonymously. Vote on the confessions that stand out most.</p>
+    <main className="page">
+      <section className="hero">
+        <span className="kicker">Juicy Couture Activation</span>
+        <h1>Anonymous Confessions</h1>
+        <p className="lead">
+          Spill the secret. Stay anonymous on the board. Vote for the confessions that deserve the crown.
+        </p>
 
-      <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-        <Link href="/submit">Submit a confession</Link>
-        <Link href="/board">View confession board</Link>
-        <Link href="/admin">Admin</Link>
-      </div>
+        <div className="nav-links">
+          <Link href="/submit" className="button button-primary">Submit a confession</Link>
+          <Link href="/board" className="button button-secondary">View confession board</Link>
+        </div>
+      </section>
     </main>
   );
 }
