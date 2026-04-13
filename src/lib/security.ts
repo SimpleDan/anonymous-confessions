@@ -7,6 +7,40 @@ export function hashIdentifier(input: string): string {
     .digest("hex");
 }
 
+export function validateName(name: string): { valid: boolean; error?: string } {
+  const trimmed = name.trim();
+
+  if (trimmed.length < 2) {
+    return { valid: false, error: "Name is too short" };
+  }
+
+  if (trimmed.length > 100) {
+    return { valid: false, error: "Name is too long" };
+  }
+
+  return { valid: true };
+}
+
+export function validateEmail(email: string): { valid: boolean; error?: string } {
+  const trimmed = email.trim();
+
+  if (!trimmed) {
+    return { valid: false, error: "Email is required" };
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(trimmed)) {
+    return { valid: false, error: "Enter a valid email address" };
+  }
+
+  if (trimmed.length > 255) {
+    return { valid: false, error: "Email is too long" };
+  }
+
+  return { valid: true };
+}
+
 export function validateConfession(content: string): { valid: boolean; error?: string } {
   const trimmed = content.trim();
 
