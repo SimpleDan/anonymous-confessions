@@ -1,45 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (
-        container: HTMLElement,
-        options: {
-          sitekey: string;
-          callback?: (token: string) => void;
-        }
-      ) => void;
-    };
-  }
-}
+import { useState } from "react";
 
 export default function SubmitPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [content, setContent] = useState("");
-  const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const widgetRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      if (window.turnstile && widgetRef.current) {
-        window.turnstile.render(widgetRef.current, {
-          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!,
-          callback: (receivedToken: string) => {
-            setToken(receivedToken);
-          },
-        });
-      }
-    };
-    document.body.appendChild(script);
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,8 +21,9 @@ export default function SubmitPage() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          content,
-          turnstileToken: token
+          name,
+          email,
+          content
         })
       });
 
@@ -64,6 +33,8 @@ export default function SubmitPage() {
         setMessage(data.error || "Submission failed");
       } else {
         setMessage(data.message || "Submitted");
+        setName("");
+        setEmail("");
         setContent("");
       }
     } catch {
@@ -76,18 +47,38 @@ export default function SubmitPage() {
   return (
     <main style={{ maxWidth: 800, margin: "0 auto", padding: "2rem" }}>
       <h1>Submit a confession</h1>
-      <p>Do not include names, contact details, or identifying information.</p>
+      <p>
+        Your name and email will not be shown publicly. They are only collected so a winner can be contacted.
+      </p>
+      <p>Do not include names, contact details, or identifying information inside the confession itself.</p>
 
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: "1rem", marginTop: "1rem" }}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Your name"
+          maxLength={100}
+          required
+        />
+
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Your email address"
+          maxLength={255}
+          required
+        />
+
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={8}
           maxLength={400}
           placeholder="Write your anonymous confession..."
+          required
         />
-
-        <div ref={widgetRef} />
 
         <button type="submit" disabled={loading}>
           {loading ? "Submitting..." : "Submit"}
