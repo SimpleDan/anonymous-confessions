@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase-server";
-import { hashIdentifier } from "@/lib/security";
+import { supabaseServer } from "@/src/lib/supabase-server";
+import { hashIdentifier } from "@/src/lib/security";
 
 function getClientIp(request: NextRequest): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
