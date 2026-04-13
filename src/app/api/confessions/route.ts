@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "../../../lib/supabase-server";
-import { containsBlockedContent, hashIdentifier, validateConfession } from "../../../lib/security";
+import {
+  containsBlockedContent,
+  hashIdentifier,
+  validateConfession,
+  validateEmail,
+  validateName
+} from "../../../lib/security";
 
 function getClientIp(request: NextRequest): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
@@ -13,14 +19,27 @@ function getClientIp(request: NextRequest): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    const name = String(body.name || "").trim();
+    const email = String(body.email || "").trim().toLowerCase();
     const content = String(body.content || "").trim();
 
     const ip = getClientIp(request);
     const userAgent = request.headers.get("user-agent") || "unknown";
 
-    const validation = validateConfession(content);
-    if (!validation.valid) {
-      return NextResponse.json({ error: validation.error }, { status: 400 });
+    const nameValidation = validateName(name);
+    if (!nameValidation.valid) {
+      return NextResponse.json({ error: nameValidation.error }, { status: 400 });
+    }
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      return NextResponse.json({ error: emailValidation.error }, { status: 400 });
+    }
+
+    const confessionValidation = validateConfession(content);
+    if (!confessionValidation.valid) {
+      return NextResponse.json({ error: confessionValidation.error }, { status: 400 });
     }
 
     const submitterHash = hashIdentifier(`${ip}:${userAgent}`);
@@ -47,6 +66,8 @@ export async function POST(request: NextRequest) {
     const status = blockedCheck.blocked ? "pending" : "approved";
 
     const { error: insertError } = await supabaseServer.from("confessions").insert({
+      name,
+      email,
       content,
       status,
       is_flagged: blockedCheck.blocked,
