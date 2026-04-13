@@ -79,9 +79,21 @@ export function containsBlockedContent(content: string): { blocked: boolean; rea
   }
 
   const bannedWords = [
-    "kill yourself",
-    "child porn",
-    "rape her",
+    "kill",
+    "child",
+    "rape",
+    "sex",
+    "drug",
+    "murder",
+    "suicide",
+    "attack",
+    "terror",
+    "fight",
+    "fuck",
+    "shit",
+    "cunt",
+    "twat",
+    "bastard",
     "doxx"
   ];
 
